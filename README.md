@@ -1,4 +1,8 @@
 # VoiceCall — Minecraft 对讲机式频道语音
+> **下载**：[GitHub Releases](https://github.com/fssmsl-111/voicecall/releases/latest)
+> · `voicecall-1.0.0-with-denoise.jar`（带降噪，推荐）
+> · `voicecall-1.0.0-no-denoise.jar`（无降噪，延迟最低）
+
 
 Minecraft **Forge 1.20.1** 的**频道制 / 对讲机式**语音 mod。
 
@@ -39,8 +43,8 @@ Minecraft **Forge 1.20.1** 的**频道制 / 对讲机式**语音 mod。
 
 1. 安装 **Minecraft 1.20.1 + Forge 47.x**（推荐 47.4.22）
 2. 把以下 jar 放进 `.minecraft/mods/`：
-   - `voicecall-1.0.0-带降噪.jar`（推荐）
-   - **或** `voicecall-1.0.0-无降噪.jar`（延迟最低，底噪原样传出）
+   - `voicecall-1.0.0-with-denoise.jar`（推荐）
+   - **或** `voicecall-1.0.0-no-denoise.jar`（延迟最低，底噪原样传出）
    - 两个只能选一个
 3. 安装前置 mod **player-animation-lib-forge 1.0.2+**（CurseForge/Modrinth 搜索 "Player Animator"）
 

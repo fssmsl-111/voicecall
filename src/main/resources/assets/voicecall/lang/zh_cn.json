@@ -1,0 +1,6 @@
+{
+  "key.categories.voicecall": "频道语音通话",
+  "key.voicecall.push_to_talk": "按住说话（默认 ~ 键）",
+  "key.voicecall.channel_menu": "打开频道面板（默认 V）",
+  "key.voicecall.free_mic": "自由麦开关（默认 M）"
+}

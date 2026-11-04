@@ -1,0 +1,6 @@
+{
+  "key.categories.voicecall": "Voice Call",
+  "key.voicecall.push_to_talk": "Push To Talk (default ~)",
+  "key.voicecall.channel_menu": "Open Channel Menu (default V)",
+  "key.voicecall.free_mic": "Toggle Open Mic (default M)"
+}

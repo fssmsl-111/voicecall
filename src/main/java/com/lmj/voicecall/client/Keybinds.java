@@ -25,6 +25,14 @@ public final class Keybinds {
             GLFW.GLFW_KEY_GRAVE_ACCENT,
             CATEGORY);
 
+    /** 选择麦克风 */
+    public static final KeyMapping MIC_SELECT = new KeyMapping(
+            "key.voicecall.mic_select",
+            KeyConflictContext.IN_GAME,
+            InputConstants.Type.KEYSYM,
+            GLFW.GLFW_KEY_F8,
+            CATEGORY);
+
     /** 打开频道面板 */
     public static final KeyMapping CHANNEL_MENU = new KeyMapping(
             "key.voicecall.channel_menu",

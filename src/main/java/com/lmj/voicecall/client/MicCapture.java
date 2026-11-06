@@ -74,6 +74,100 @@ public final class MicCapture {
         }
     }
 
+
+    /** 当前选择的麦克风（空 = 系统默认） */
+    private static volatile String deviceName = "";
+    private static boolean deviceLoaded = false;
+
+    /** 列出所有支持当前格式的录音设备 */
+    public static java.util.List<String> listDevices() {
+        java.util.List<String> out = new java.util.ArrayList<>();
+        out.add("系统默认");
+        DataLine.Info info = new DataLine.Info(TargetDataLine.class, FORMAT);
+        for (javax.sound.sampled.Mixer.Info mi : AudioSystem.getMixerInfo()) {
+            try {
+                javax.sound.sampled.Mixer mixer = AudioSystem.getMixer(mi);
+                if (mixer.isLineSupported(info)) {
+                    out.add(mi.getName());
+                }
+            } catch (Throwable ignored) {
+            }
+        }
+        return out;
+    }
+
+    public static String getDeviceName() {
+        loadDeviceFromConfig();
+        return deviceName;
+    }
+
+    public static void setDeviceName(String name) {
+        deviceName = name == null ? "" : name;
+        deviceLoaded = true;
+        com.lmj.voicecall.VoiceCallMod.LOGGER.info("[VoiceCall] 麦克风设备切换为: {}",
+                deviceName.isEmpty() ? "系统默认" : deviceName);
+    }
+
+    private static java.nio.file.Path configPath() {
+        return net.minecraftforge.fml.loading.FMLPaths.CONFIGDIR.get().resolve("voicecall-client.txt");
+    }
+
+    private static void loadDeviceFromConfig() {
+        if (deviceLoaded) {
+            return;
+        }
+        deviceLoaded = true;
+        try {
+            java.nio.file.Path p = configPath();
+            if (!java.nio.file.Files.exists(p)) {
+                return;
+            }
+            for (String line : java.nio.file.Files.readAllLines(p)) {
+                String t = line.trim();
+                if (t.startsWith("micDevice=")) {
+                    deviceName = t.substring("micDevice=".length()).trim();
+                }
+            }
+        } catch (Throwable ignored) {
+        }
+    }
+
+    /** 把当前设备写回配置 */
+    public static void saveDeviceToConfig() {
+        try {
+            java.nio.file.Path p = configPath();
+            java.util.List<String> lines = java.nio.file.Files.exists(p)
+                    ? new java.util.ArrayList<>(java.nio.file.Files.readAllLines(p))
+                    : new java.util.ArrayList<>();
+            lines.removeIf(l -> l.trim().startsWith("micDevice="));
+            lines.add("micDevice=" + deviceName);
+            java.nio.file.Files.write(p, lines);
+        } catch (Throwable t) {
+            com.lmj.voicecall.VoiceCallMod.LOGGER.warn("[VoiceCall] 保存麦克风配置失败: {}", t.getMessage());
+        }
+    }
+
+    /** 按当前选择打开采集线路 */
+    private static TargetDataLine openLine(DataLine.Info info) throws javax.sound.sampled.LineUnavailableException {
+        loadDeviceFromConfig();
+        if (!deviceName.isEmpty()) {
+            for (javax.sound.sampled.Mixer.Info mi : AudioSystem.getMixerInfo()) {
+                if (!mi.getName().equals(deviceName)) {
+                    continue;
+                }
+                try {
+                    javax.sound.sampled.Mixer mixer = AudioSystem.getMixer(mi);
+                    if (mixer.isLineSupported(info)) {
+                        return (TargetDataLine) mixer.getLine(info);
+                    }
+                } catch (Throwable ignored) {
+                }
+            }
+            com.lmj.voicecall.VoiceCallMod.LOGGER.warn("[VoiceCall] 找不到麦克风 {}，改用系统默认", deviceName);
+        }
+        return (TargetDataLine) AudioSystem.getLine(info);
+    }
+
     public static synchronized boolean start() {
         if (running) {
             return true;
@@ -84,7 +178,7 @@ public final class MicCapture {
                 lastError = "找不到可用的麦克风（格式不支持）";
                 return false;
             }
-            line = (TargetDataLine) AudioSystem.getLine(info);
+            line = openLine(info);
             // 采集缓冲缩到 2 帧（40ms容量）
             line.open(FORMAT, CAPTURE_FRAME_BYTES * 8);
             line.start();

@@ -28,7 +28,8 @@ public final class ClientEvents {
         @SubscribeEvent
         public static void registerKeys(RegisterKeyMappingsEvent event) {
             event.register(Keybinds.PUSH_TO_TALK);
-                event.register(Keybinds.CHANNEL_MENU);
+                event.register(Keybinds.MIC_SELECT);
+        event.register(Keybinds.CHANNEL_MENU);
             event.register(Keybinds.FREE_MIC);
         }
     }
@@ -46,7 +47,13 @@ public final class ClientEvents {
                 return;
             }
             Minecraft mc = Minecraft.getInstance();
-            // 按 C 打开频道面板
+            // F8 选择麦克风
+            while (Keybinds.MIC_SELECT.consumeClick()) {
+                if (mc.screen == null && mc.player != null) {
+                    mc.setScreen(new MicSelectScreen(null));
+                }
+            }
+            // 按 V 打开频道面板
             while (Keybinds.CHANNEL_MENU.consumeClick()) {
                 if (mc.screen == null && mc.player != null) {
                     mc.setScreen(new ChannelScreen());

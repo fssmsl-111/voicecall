@@ -84,18 +84,34 @@ voicePublicPort=0
 
 ---
 
-## 从源码构建
+## 从源码构建 / Building from source
+
+需要的环境：**JDK 17** + 能访问 Maven 的 Gradle（本仓库自带 `gradlew`）。
 
 ```bash
-# 需要 JDK 17
 ./gradlew build
-# 产物：build/libs/voicecall-1.0.0.jar
+# 产物：build/libs/voicecall-<version>.jar
 ```
 
 Windows：
 ```powershell
 .\gradlew.bat build
 ```
+
+### 版本与源码对应 / Release ↔ source mapping
+
+| 发布版本 | 对应 git 标签 | jar SHA-256 |
+|---|---|---|
+| v1.0.0 | `v1.0.0` | 见 Release 页 |
+| v1.1.0 | `v1.1.0` | `F454D3FFE551EE1D0A55824F8469F9106198006590071A5A68CDC7711953EE29` |
+
+每一个发布 jar 都由上表对应标签的源码通过 `./gradlew build` 直接构建，未做额外修改。
+
+### 代码来源说明 / Source disclosure
+
+- 本仓库是本项目的**唯一源码**，未包含任何来自其他 mod 的反编译代码。
+- 开发过程使用 AI 辅助（见 Modrinth 的 "AI-generated code" 标记），所有代码均可在此仓库审查。
+- 除下表列出的第三方组件外，本 mod 不包含任何闭源二进制。
 
 ---
 
@@ -120,11 +136,15 @@ Windows：
 
 ---
 
-## 第三方
+## 第三方 / Third-party
 
-- [RNNoise](https://github.com/xiph/rnnoise)（BSD-3-Clause）— 神经网络降噪，构建版位于 `src/main/resources/native/win-x64/rnnoise.dll`
-- [PlayerAnimator](https://github.com/KosmX/minecraftPlayerAnimator) — 抬手动画前置 mod（不随本仓库分发）
-- [JNA](https://github.com/java-native-access/jna)（Apache-2.0）— 调用 RNNoise
+| 组件 | 来源 | 许可 | 说明 |
+|---|---|---|---|
+| **RNNoise** | [xiph/rnnoise](https://github.com/xiph/rnnoise) 0.2，Windows x64 预编译二进制取自 MSYS2 软件包 `mingw-w64-x86_64-rnnoise` | BSD-3-Clause | 路径 `src/main/resources/native/win-x64/rnnoise.dll`，SHA-256 `6A0F8DA4F39D81CBA980EE5D73CC4100C54CCE3112C3CEE6E4E54F0AF8FF9A3F`，运行时释放到临时目录由 JNA 加载 |
+| **JNA** | [java-native-access/jna](https://github.com/java-native-access/jna) | Apache-2.0 / LGPL-2.1 | Minecraft 运行环境已自带，本 mod 不打包 |
+| **PlayerAnimator** | [KosmX/minecraftPlayerAnimator](https://github.com/KosmX/minecraftPlayerAnimator) | Apache-2.0 | 抬手动画前置，需玩家自行安装，不随本仓库分发 |
+
+降噪二进制仅用于可选的 RNNoise 降噪版本；不想使用任何本地二进制的用户可以改用「无降噪」构建（编译时关闭 RNNoise 即可，源码相同）。
 
 ## 许可证
 
